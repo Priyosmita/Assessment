@@ -2,7 +2,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { IoIosSend, IoMdMore } from "react-icons/io";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
-import { AiOutlineEllipsis } from "react-icons/ai";
+import { AiOutlineClose, AiOutlineEllipsis } from "react-icons/ai";
+import { FaRegEnvelope } from "react-icons/fa";
+import { LuMailOpen } from "react-icons/lu";
+import { FaReply } from "react-icons/fa";
+
+
 const emailData = [
   {
     name: "John Doe",
@@ -28,6 +33,15 @@ const emailData = [
         date: "Aug 10",
       },
     ],
+    lead: [
+      {
+        name: "John",
+        contact: "+913456345678",
+        email: "john.doe@example.com",
+        linkedIn: "linkedin.in/in/johndoe",
+        company: "Reachinbox",
+      },
+    ],
   },
   {
     name: "Jane Smith",
@@ -47,6 +61,15 @@ const emailData = [
         date: "Aug 8",
       },
     ],
+    lead: [
+      {
+        name: "Jane",
+        contact: "+912345678910",
+        email: "jane.smith@example.com",
+        linkedIn: "linkedin.in/in/janesmith",
+        company: "Reachinbox",
+      },
+    ],
   },
   {
     name: "Info Tech",
@@ -64,6 +87,15 @@ const emailData = [
         to: "info@company.com",
         body: "Got it. I'll review the materials and get back to you if needed.",
         date: "Aug 6",
+      },
+    ],
+    lead: [
+      {
+        name: "Info",
+        contact: "+911234567890",
+        email: "info@company.com",
+        linkedIn: "linkedin.in/in/infotech",
+        company: "Reachinbox",
       },
     ],
   },
@@ -91,6 +123,15 @@ const emailData = [
         date: "Aug 6",
       },
     ],
+    lead: [
+      {
+        name: "Support",
+        contact: "+919876543210",
+        email: "support@helpdesk.com",
+        linkedIn: "linkedin.in/in/supportteam",
+        company: "Reachinbox",
+      },
+    ],
   },
   {
     name: "Market",
@@ -110,13 +151,135 @@ const emailData = [
         date: "Aug 4",
       },
     ],
+    lead: [
+      {
+        name: "Market",
+        contact: "+914567890123",
+        email: "marketing@agency.com",
+        linkedIn: "linkedin.in/in/marketingspecialist",
+        company: "Reachinbox",
+      },
+    ],
   },
-  // Add more email data as needed
+  {
+    name: "Alice Brown",
+    email: "alice.brown@startup.com",
+    title: "Investment Proposal",
+    from: "alice.brown@startup.com",
+    to: "you@example.com",
+    body: "We are looking for investors for our new project. Attached is our proposal.",
+    preview: "We are looking for investors...",
+    date: "Aug 2",
+    status: "Interested",
+    replies: [
+      {
+        from: "you@example.com",
+        to: "alice.brown@startup.com",
+        body: "Thanks, Alice. I'll review the proposal and get back to you.",
+        date: "Aug 3",
+      },
+    ],
+    lead: [
+      {
+        name: "Alice",
+        contact: "+918765432109",
+        email: "alice.brown@startup.com",
+        linkedIn: "linkedin.in/in/alicebrown",
+        company: "Reachinbox",
+      },
+    ],
+  },
+  {
+    name: "Bob Carter",
+    email: "bob.carter@fintech.com",
+    title: "Financial Update",
+    from: "bob.carter@fintech.com",
+    to: "you@example.com",
+    body: "Here’s the latest financial update for Q2.",
+    preview: "Here’s the latest financial update...",
+    date: "Aug 1",
+    status: "Meeting Completed",
+    replies: [
+      {
+        from: "you@example.com",
+        to: "bob.carter@fintech.com",
+        body: "Thanks for the update, Bob. I'll review the figures.",
+        date: "Aug 2",
+      },
+    ],
+    lead: [
+      {
+        name: "Bob",
+        contact: "+917654321098",
+        email: "bob.carter@fintech.com",
+        linkedIn: "linkedin.in/in/bobcarter",
+        company: "Reachinbox",
+      },
+    ],
+  },
+  {
+    name: "Clara Davis",
+    email: "clara.davis@design.com",
+    title: "Design Feedback",
+    from: "clara.davis@design.com",
+    to: "you@example.com",
+    body: "Looking forward to your feedback on the latest design mockups.",
+    preview: "Looking forward to your feedback...",
+    date: "Jul 31",
+    status: "Closed",
+    replies: [
+      {
+        from: "you@example.com",
+        to: "clara.davis@design.com",
+        body: "Great work, Clara. I'll provide feedback by tomorrow.",
+        date: "Aug 1",
+      },
+    ],
+    lead: [
+      {
+        name: "Clara",
+        contact: "+916543210987",
+        email: "clara.davis@design.com",
+        linkedIn: "linkedin.in/in/claradavis",
+        company: "Reachinbox",
+      },
+    ],
+  },
+  {
+    name: "David Evans",
+    email: "david.evans@tech.com",
+    title: "Product Launch",
+    from: "david.evans@tech.com",
+    to: "you@example.com",
+    body: "Exciting news! Our new product launch is scheduled for next month.",
+    preview: "Exciting news! Our new product...",
+    date: "Jul 30",
+    status: "Interested",
+    replies: [
+      {
+        from: "you@example.com",
+        to: "david.evans@tech.com",
+        body: "That sounds exciting, David! I'll be looking forward to it.",
+        date: "Jul 31",
+      },
+    ],
+    lead: [
+      {
+        name: "David",
+        contact: "+915432109876",
+        email: "david.evans@tech.com",
+        linkedIn: "linkedin.in/in/davidevans",
+        company: "Reachinbox",
+      },
+    ],
+  },
 ];
+
 
 const getStatusButton = (status) => {
   let buttonText;
   let buttonColor;
+
 
   switch (status) {
     case "Interested":
@@ -140,17 +303,17 @@ const getStatusButton = (status) => {
       buttonColor = "text-green-500";
   }
 
+
   return (
-    <button className={`mr-3 px-2 bg-[#1f2125] ${buttonColor} text-xs rounded-full flex items-center`}>
-        <span className="mr-1 text-xl">
-        ●
-        </span>
-        <span className="mr-2">
-            {buttonText}
-        </span>
+    <button
+      className={`mr-3 px-2 bg-[#1f2125] ${buttonColor} text-xs rounded-full flex items-center`}
+    >
+      <span className="mr-1 text-xl">●</span>
+      <span className="mr-2">{buttonText}</span>
     </button>
   );
 };
+
 
 const DashboardContent = () => {
   const [emails, setEmails] = useState(emailData);
@@ -159,7 +322,11 @@ const DashboardContent = () => {
   const [selectedEmail, setSelectedEmail] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
+  const [isReplyPopupOpen, setIsReplyPopupOpen] = useState(false);
+
+
   const menuRef = useRef(null);
+
 
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -175,12 +342,17 @@ const DashboardContent = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+  const openReplyPopup = () => {
+    setIsReplyPopupOpen(true);
+  };
+
 
   const filterEmails = (query, sort) => {
     const lowercasedQuery = query.toLowerCase();
     let filteredEmails = emailData.filter((email) =>
       email.email.toLowerCase().includes(lowercasedQuery)
     );
+
 
     switch (sort) {
       case "Newest":
@@ -213,14 +385,25 @@ const DashboardContent = () => {
       // No additional filtering or sorting
     }
 
+
     setEmails(filteredEmails);
   };
+
 
   const handleSearchChange = (event) => {
     const query = event.target.value;
     setSearchQuery(query);
     filterEmails(query, sortOption);
   };
+  const handleReplyButtonClick = () => {
+    setIsReplyPopupOpen(true);
+  };
+
+
+  const closeReplyPopup = () => {
+    setIsReplyPopupOpen(false);
+  };
+
 
   const handleSortChange = (event) => {
     const sort = event.target.value;
@@ -228,11 +411,13 @@ const DashboardContent = () => {
     filterEmails(searchQuery, sort);
   };
 
+
   const handleEmailClick = (email) => {
     setSelectedEmail(email);
     setIsMenuOpen(false); // Ensure menu is closed when selecting a new email
     setShowReplies(false); // Reset reply view state when a new email is selected
   };
+
 
   const handleStatusChange = (event) => {
     const newStatus = event.target.value;
@@ -249,11 +434,13 @@ const DashboardContent = () => {
     );
   };
 
+
   const handleDeleteEmail = () => {
     setEmails(emails.filter((email) => email.email !== selectedEmail.email));
     setSelectedEmail(null);
     setIsMenuOpen(false); // Ensure menu is closed after deletion
   };
+
 
   const handleRecoverEmail = () => {
     // Implement recovery logic here
@@ -261,6 +448,7 @@ const DashboardContent = () => {
   const toggleReplies = () => {
     setShowReplies((prev) => !prev);
   };
+
 
   return (
     <div className="flex h-full">
@@ -278,11 +466,13 @@ const DashboardContent = () => {
             </div>
           </div>
 
+
           {/* Dynamic Text */}
           <div className="text-gray-400 mb-4 pl-2">
             <span className="font-bold text-white pl-2">25/25</span> Inboxes
             selected
           </div>
+
 
           {/* Search Bar */}
           <div className="mb-4">
@@ -294,6 +484,7 @@ const DashboardContent = () => {
               className="w-full bg-[#1f2125] text-white py-2 px-4 rounded-md border border-gray-600 focus:outline-none focus:border-gray-400"
             />
           </div>
+
 
           {/* New Replies and Sort Filter */}
           <div className="flex justify-between items-center mb-4">
@@ -318,6 +509,7 @@ const DashboardContent = () => {
               </select>
             </div>
           </div>
+
 
           {/* Email Previews List (Scrollable) */}
           <div className="overflow-y-scroll h-[calc(100vh-280px)] scrollbar-hide">
@@ -347,6 +539,7 @@ const DashboardContent = () => {
           </div>
         </div>
       </div>
+
 
       {/* Mid Column (w-1/2) */}
       <div className="w-2/4  border-r border-[#2c3236]">
@@ -383,11 +576,13 @@ const DashboardContent = () => {
                   </option>
                 </select>
 
+
                 {/* Move/Demo Dropdown */}
                 <select className="ml-2 bg-[#1f2125] text-white py-2 px-3 text-xs rounded-sm focus:outline-none focus:border-gray-400 border-[#2c3236] border-2">
                   <option>Move</option>
                   <option>Demo</option>
                 </select>
+
 
                 {/* Three-Dots Menu */}
                 <div
@@ -422,6 +617,7 @@ const DashboardContent = () => {
               </div>
             </div>
 
+
             {/* Email Details */}
             <div className="border  border-t-[#2c3236] border-b-[#2c3236] border-l-0 border-r-0 mr-4 ml-4 relative">
               <div className="bg-[#1f2125] p-4 rounded-md text-white mt-4 mb-8 ml-r mr-4">
@@ -442,6 +638,7 @@ const DashboardContent = () => {
                   </div>
                 </div>
 
+
                 <div className="bg-[#1f2125]  rounded-md text-white">
                   <div>{selectedEmail.body}</div>
                 </div>
@@ -457,9 +654,12 @@ const DashboardContent = () => {
               </div>
               {/* Replies Section */}
               {showReplies && (
-                <div className=" border-t border-[#2c3236] overflow-y-scroll h-[calc(100vh-450px)] scrollbar-hide">
+                <div className=" border-t border-[#2c3236] overflow-y-scroll h-[calc(100vh-410px)] scrollbar-hide">
                   {selectedEmail.replies.map((reply, index) => (
-                    <div key={index} className="mb-4">
+                    <div
+                      key={index}
+                      className="mb-4 border border-b-[#2c3236] border-r-0 border-l-0 border-t-0"
+                    >
                       <div className="bg-[#1f2125] p-4 rounded-md text-white mt-4 mb-8 ml-r mr-4">
                         <div className="mb-4 text-gray-400 text-sm space-y-3">
                           <div>
@@ -478,6 +678,7 @@ const DashboardContent = () => {
                           </div>
                         </div>
 
+
                         <div className="bg-[#1f2125]  rounded-md text-white">
                           <div>{reply.body}</div>
                         </div>
@@ -486,19 +687,202 @@ const DashboardContent = () => {
                   ))}
                 </div>
               )}
+              {/* Fixed Reply Button */}
+              <div className="fixed bottom-0 left-100 mb-4 ml-4">
+                <button
+                  onClick={openReplyPopup}
+                  className="flex items-center text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                >
+                  Reply
+                </button>
+              </div>
             </div>
+            {/* Reply Popup */}
+            {isReplyPopupOpen && (
+              <div className="fixed inset-0 z-50 flex items-end justify-center bg-black bg-opacity-50">
+                <div className="bg-[#1f2125] w-1/2 ml-16 mb-4 h-4/5 rounded-md border-[#2c3236] border-2  relative">
+                  {/* Header */}
+                  <div className="flex justify-between items-center border-b border-[#2c3236] pb-2 bg-[#23272c]">
+                    <div className="text-xs pt-2 text-gray-400  pl-8 ">
+                      Reply
+                    </div>
+                    <button
+                      onClick={closeReplyPopup}
+                      className="text-white text-2xl pr-2 pt-2"
+                    >
+                      <AiOutlineClose />
+                    </button>
+                  </div>
+
+
+                  {/* Email Info */}
+                  <div className="mt-2 space-y-2">
+                    <div className="text-sm text-gray-300 pl-8 border-b-2 border-[#2c3236] pb-2">
+                      <span className="text-gray-500">To: </span>{" "}
+                      {selectedEmail.to}
+                    </div>
+                    <div className="text-sm text-gray-300 pl-8 border-b-2 border-[#2c3236] pb-2">
+                      <span className="text-gray-500">From: </span>{" "}
+                      {selectedEmail.from}
+                    </div>
+                    <div className="text-sm text-gray-300 pl-8 border-b-2 border-[#2c3236] pb-2">
+                      <span className="text-gray-500">Subject: </span>{" "}
+                      {selectedEmail.title}
+                    </div>
+                  </div>
+
+
+                  {/* Body */}
+                  <div className="mt-4 flex-1 pl-8 pr-8 border-b-2 border-[#2c3236]">
+                    <textarea
+                      className="w-full h-80 bg-[#1f2125] text-gray-400 text-sm p-2 rounded-md mr-20 appearance-none focus:outline-none focus:border-none"
+                      defaultValue={`Hi ${selectedEmail.name},`}
+                    />
+                  </div>
+
+
+                  {/* Footer */}
+                  <div className="flex justify-between items-center mt-2 px-4">
+                    <button className="bg-blue-600 text-white py-2 px-4 rounded-md">
+                      Send
+                    </button>
+                    <div className="flex space-x-4 text-white text-sm">
+                      <button>⚡ Variables</button>
+                      <button>👁 Preview Email</button>
+                      <button>🅰 Formatting</button>
+                      <button>🔗 Attach Link</button>
+                      <button>🖼 Attach Image</button>
+                      <button>🙂 Emojis</button>
+                      <button>👥 Mention</button>
+                      <button>🧩 Code Snippet</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="text-gray-400">Select an email to view details</div>
         )}
       </div>
+      {/* right Column (w-1/2) */}
+      <div className="w-1/4 border border-l-[#2c3236] border-b-0 border-r-0 border-t-0">
+        <div className="p-2">
+          <div>
+            <div className="bg-[#1f2125] rounded-lg mb-4">
+              <p className="pt-2 pb-2 pr-4 pl-4">Lead details</p>
+            </div>
+            {selectedEmail && selectedEmail.lead ? (
+              selectedEmail.lead.map((leadDetail, index) => (
+                <div
+                  key={index}
+                  className="pb-2 pr-4 pl-4 space-y-5 text-gray-400"
+                >
+                  <p className="flex flex-row justify-between">
+                    <span>Name:</span> {leadDetail.name}
+                  </p>
+                  <p className="flex flex-row justify-between">
+                    <span>Contact:</span> <span>{leadDetail.contact}</span>
+                  </p>
+                  <p className="flex flex-row justify-between">
+                    <span>Email:</span> <span>{leadDetail.email}</span>
+                  </p>
+                  <p className="flex flex-row justify-between">
+                    <span>LinkedIn:</span>{" "}
+                    <a
+                      href={`https://${leadDetail.linkedIn}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {leadDetail.linkedIn}
+                    </a>
+                  </p>
+                  <p className="flex flex-row justify-between">
+                    <span>Company:</span> {leadDetail.company}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="pb-2 pr-4 pl-4">No lead details available.</p>
+            )}
+          </div>
+        </div>
 
-      {/* Rightmost Column */}
-      <div className="w-1/4 bg-transparent max-h-screen border border-r-[#2c3236] border-t-0 border-b-0 border-l-0">
 
+        {/* Activities Section */}
+        <div className="p-4">
+          <div className="bg-[#1f2125] rounded-lg mb-4">
+            <p className="pt-2 pb-2 pr-4 pl-4">Activities</p>
+          </div>
+
+
+          {/* Campaign Name */}
+          <div className="pt-2 pb-4 pr-4 pl-4 ">
+            <p className="font-semibold text-white pb-4">Campaign Name</p>
+            <p className="text-sm text-gray-300">
+              3 Steps | 5 Days in Sequence
+            </p>
+          </div>
+
+
+          {/* Steps */}
+          <div className="space-y-4 pl-4 relative">
+            {/* Step 1 */}
+            <div className="flex flex-row items-center space-x-4">
+              <div className="relative w-8 h-8 flex items-center justify-center bg-gray-700 rounded-full">
+                <FaRegEnvelope />
+                {/* Line connecting the steps */}
+                <span className="absolute top-8 left-1/2 transform -translate-x-1/2 w-px h-[calc(100%+16px)] bg-gray-600"></span>
+              </div>
+              <div className="pl-2 space-y-1">
+                <p className="text-gray-200">Step 1: Email</p>
+                <span className="flex items-center text-xs text-gray-500">
+                  <IoIosSend className="mr-1 text-white h-4 w-4" />
+                  Sent 3rd, Feb
+                </span>
+              </div>
+            </div>
+
+
+            {/* Step 2 */}
+            <div className="flex flex-row items-center space-x-4">
+              <div className="relative w-8 h-8 flex items-center justify-center bg-gray-700 rounded-full">
+                <FaRegEnvelope />
+                {/* Line connecting the steps */}
+                <span className="absolute top-0 left-1/2 transform -translate-x-1/2 w-px h-full bg-gray-600"></span>
+                <span className="absolute top-full left-1/2 transform -translate-x-1/2 w-px h-[calc(100%+16px)] bg-gray-600"></span>
+              </div>
+              <div className="pl-2 space-y-1">
+                <p className="text-gray-200">Step 2: Email</p>
+                <span className="flex items-center text-xs text-gray-500">
+                  <LuMailOpen className="mr-1 mb-1 text-yellow-300 h-4 w-4" />
+                  Opened 5th, Feb
+                </span>
+              </div>
+            </div>
+
+
+            {/* Step 3 */}
+            <div className="flex flex-row items-center space-x-4">
+              <div className="relative w-8 h-8 flex items-center justify-center bg-gray-700 rounded-full">
+                <FaRegEnvelope />
+                {/* No bottom line here as it's the last step */}
+                <span className="absolute top-0 left-1/2 transform -translate-x-1/2 w-px h-full bg-gray-600"></span>
+              </div>
+              <div className="pl-2 space-y-1">
+                <p className="text-gray-200">Step 3: Email</p>
+                <span className="flex items-center text-xs text-gray-500">
+                  <LuMailOpen className="mr-1 mb-1 text-yellow-300 h-4 w-4" />
+                  Opened 5th, Feb
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
+
 
 export default DashboardContent;
