@@ -6,8 +6,14 @@ import { AiOutlineClose, AiOutlineEllipsis } from "react-icons/ai";
 import { FaRegEnvelope } from "react-icons/fa";
 import { LuMailOpen } from "react-icons/lu";
 import { FaReply } from "react-icons/fa";
-
-
+import { AiFillThunderbolt } from "react-icons/ai";
+import { LuEye } from "react-icons/lu";
+import { IoLink } from "react-icons/io5";
+import { AiFillPicture } from "react-icons/ai";
+import { PiSmiley } from "react-icons/pi";
+import { MdPersonRemove } from "react-icons/md";
+import { IoCodeSharp } from "react-icons/io5";
+import { MdOutlineArrowDropDown } from "react-icons/md";
 const emailData = [
   {
     name: "John Doe",
@@ -323,6 +329,7 @@ const DashboardContent = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
   const [isReplyPopupOpen, setIsReplyPopupOpen] = useState(false);
+  const [readEmails, setReadEmails] = useState({});
 
 
   const menuRef = useRef(null);
@@ -416,6 +423,11 @@ const DashboardContent = () => {
     setSelectedEmail(email);
     setIsMenuOpen(false); // Ensure menu is closed when selecting a new email
     setShowReplies(false); // Reset reply view state when a new email is selected
+    // Mark the email as read by updating the readEmails state
+    setReadEmails((prevReadEmails) => ({
+      ...prevReadEmails,
+      [email.email]: true, // Mark the email as read
+    }));
   };
 
 
@@ -448,6 +460,7 @@ const DashboardContent = () => {
   const toggleReplies = () => {
     setShowReplies((prev) => !prev);
   };
+  const unreadEmailsCount = emails.filter(email => !readEmails[email.email]).length;
 
 
   return (
@@ -490,7 +503,7 @@ const DashboardContent = () => {
           <div className="flex justify-between items-center mb-4">
             <div className="text-white font-semibold text-xl">
               <span className="bg-[#1f2125] rounded-full pt-1 pb-1 pr-2 mr-1 pl-2 font-bold text-blue-700">
-                26
+                {unreadEmailsCount}
               </span>
               New replies
             </div>
@@ -513,29 +526,36 @@ const DashboardContent = () => {
 
           {/* Email Previews List (Scrollable) */}
           <div className="overflow-y-scroll h-[calc(100vh-280px)] scrollbar-hide">
-            {emails.map((email, index) => (
-              <div
-                key={index}
-                onClick={() => handleEmailClick(email)}
-                className="p-3 bg-transparent border border-b-0 border-r-0 border-l-0 border-t-[#2c3236] cursor-pointer"
-              >
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center">
-                    <span className="text-blue-500 mr-2 text-xl">●</span>
-                    <span className="text-white">{email.email}</span>
+            {emails
+              .filter((email) =>
+                email.email.toLowerCase().includes(searchQuery.toLowerCase())
+              )
+              .map((email, index) => (
+                <div
+                  key={index}
+                  onClick={() => handleEmailClick(email)}
+                  className={`p-3 bg-transparent border border-b-0 border-r-0 border-l-0 border-t-[#2c3236] cursor-pointer
+              ${selectedEmail === email ? "border-l-4 border-blue-500" : ""}`}
+                >
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center">
+                    {!readEmails[email.email] && (
+                      <span className="text-blue-500 mr-2 text-xl">●</span>
+                    )}
+                      <span className="text-white">{email.email}</span>
+                    </div>
+                    <div className="text-gray-400 text-sm">{email.date}</div>
                   </div>
-                  <div className="text-gray-400 text-sm">{email.date}</div>
+                  <div className="text-gray-400 text-sm">{email.preview}</div>
+                  <div className="flex mt-2">
+                    {getStatusButton(email.status)}
+                    <button className="px-2 bg-[#1f2125] text-white text-xs rounded-full flex flex-row justify-center items-center">
+                      <IoIosSend className="h-5 w-5 opacity-60" />
+                      <h3 className="mr-1 font-semibold">Campaign Name</h3>
+                    </button>
+                  </div>
                 </div>
-                <div className="text-gray-400 text-sm">{email.preview}</div>
-                <div className="flex mt-2">
-                  {getStatusButton(email.status)}
-                  <button className="px-2 bg-[#1f2125] text-white text-xs rounded-full flex flex-row justify-center items-center">
-                    <IoIosSend className="h-5 w-5 opacity-60" />
-                    <h3 className="mr-1 font-semibold">Campaign Name</h3>
-                  </button>
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </div>
@@ -691,9 +711,10 @@ const DashboardContent = () => {
               <div className="fixed bottom-0 left-100 mb-4 ml-4">
                 <button
                   onClick={openReplyPopup}
-                  className="flex items-center text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                  className="flex items-center text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 flex-row gap-x-2"
                 >
-                  Reply
+                  <FaReply />
+                  <span>Reply</span>
                 </button>
               </div>
             </div>
@@ -742,19 +763,36 @@ const DashboardContent = () => {
 
 
                   {/* Footer */}
-                  <div className="flex justify-between items-center mt-2 px-4">
-                    <button className="bg-blue-600 text-white py-2 px-4 rounded-md">
-                      Send
+                  <div className="flex gap-x-4 items-center mt-2 px-4">
+                    <button className="bg-blue-600 text-white py-2 px-4 rounded-md flex flex-row gap-x-3">
+                      <p>Send</p>
+                      <MdOutlineArrowDropDown className="text-2xl" />
                     </button>
                     <div className="flex space-x-4 text-white text-sm">
-                      <button>⚡ Variables</button>
-                      <button>👁 Preview Email</button>
-                      <button>🅰 Formatting</button>
-                      <button>🔗 Attach Link</button>
-                      <button>🖼 Attach Image</button>
-                      <button>🙂 Emojis</button>
-                      <button>👥 Mention</button>
-                      <button>🧩 Code Snippet</button>
+                      <button className="flex flex-row mt-2 gap-x-1 text-gray-400">
+                        <AiFillThunderbolt className=" text-xl" />{" "}
+                        <span>Variables</span>
+                      </button>
+                      <button className="flex flex-row mt-2 gap-x-2 text-gray-400">
+                        <LuEye className="text-xl " />{" "}
+                        <span>Preview Email</span>
+                      </button>
+                      <button className="text-xl mt-1 text-gray-400">A</button>
+                      <button>
+                        <IoLink className="text-2xl text-gray-400" />
+                      </button>
+                      <button>
+                        <AiFillPicture className="text-2xl text-gray-400" />
+                      </button>
+                      <button>
+                        <PiSmiley className="text-2xl text-gray-400" />
+                      </button>
+                      <button>
+                        <MdPersonRemove className="text-2xl text-gray-400" />
+                      </button>
+                      <button className="text-2xl">
+                        <IoCodeSharp className="text-2xl text-gray-400" />
+                      </button>
                     </div>
                   </div>
                 </div>
