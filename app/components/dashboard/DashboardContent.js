@@ -348,7 +348,7 @@ const DashboardContent = () => {
         </div>
       </div>
 
-      {/* Right Column (w-1/2) */}
+      {/* Mid Column (w-1/2) */}
       <div className="w-2/4  border-r border-[#2c3236]">
         {selectedEmail ? (
           <div>
@@ -491,6 +491,11 @@ const DashboardContent = () => {
         ) : (
           <div className="text-gray-400">Select an email to view details</div>
         )}
+      </div>
+
+      {/* Rightmost Column */}
+      <div className="w-1/4 bg-transparent max-h-screen border border-r-[#2c3236] border-t-0 border-b-0 border-l-0">
+
       </div>
     </div>
   );
