@@ -457,7 +457,7 @@ const DashboardContent = () => {
               </div>
               {/* Replies Section */}
               {showReplies && (
-                <div className=" border-t border-[#2c3236] overflow-y-scroll h-[calc(100vh-400px)] scrollbar-hide">
+                <div className=" border-t border-[#2c3236] overflow-y-scroll h-[calc(100vh-450px)] scrollbar-hide">
                   {selectedEmail.replies.map((reply, index) => (
                     <div key={index} className="mb-4">
                       <div className="bg-[#1f2125] p-4 rounded-md text-white mt-4 mb-8 ml-r mr-4">
@@ -491,7 +491,6 @@ const DashboardContent = () => {
         ) : (
           <div className="text-gray-400">Select an email to view details</div>
         )}
-        <button type="button" class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-md text-sm px-9 py-4 mt-8 text-center me-2 mb-8">Reply</button>
       </div>
     </div>
   );
