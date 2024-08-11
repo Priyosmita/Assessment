@@ -141,11 +141,13 @@ const getStatusButton = (status) => {
   }
 
   return (
-    <button
-      className={mr-3 px-2 bg-[#1f2125] ${buttonColor} text-xs rounded-full flex items-center}
-    >
-      <span className="mr-1 text-xl">●</span>
-      <span className="mr-2">{buttonText}</span>
+    <button className={`mr-3 px-2 bg-[#1f2125] ${buttonColor} text-xs rounded-full flex items-center`}>
+        <span className="mr-1 text-xl">
+        ●
+        </span>
+        <span className="mr-2">
+            {buttonText}
+        </span>
     </button>
   );
 };
@@ -489,6 +491,7 @@ const DashboardContent = () => {
         ) : (
           <div className="text-gray-400">Select an email to view details</div>
         )}
+        <button type="button" class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-md text-sm px-9 py-4 mt-8 text-center me-2 mb-8">Reply</button>
       </div>
     </div>
   );
