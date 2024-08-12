@@ -14,9 +14,6 @@ import { PiSmiley } from "react-icons/pi";
 import { MdPersonRemove } from "react-icons/md";
 import { IoCodeSharp } from "react-icons/io5";
 import { MdOutlineArrowDropDown } from "react-icons/md";
-
-
-
 const emailData = [
   {
     name: "John Doe",
@@ -334,17 +331,14 @@ const DashboardContent = () => {
   const [isReplyPopupOpen, setIsReplyPopupOpen] = useState(false);
   const [readEmails, setReadEmails] = useState({});
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
+  const [replyText, setReplyText] = useState(() =>
+    selectedEmail ? `Hi ${selectedEmail.name},` : ""
+  );
 
 
   const menuRef = useRef(null);
 
 
-  const openDeletePopup = () => {
-    setIsDeletePopupOpen(true);
-  };
-  const closeDeletePopup = () => {
-    setIsDeletePopupOpen(false);
-  };
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -353,6 +347,36 @@ const DashboardContent = () => {
       setIsMenuOpen(false);
     }
   };
+  const openDeletePopup = () => {
+    setIsDeletePopupOpen(true);
+  };
+
+
+  const closeDeletePopup = () => {
+    setIsDeletePopupOpen(false);
+  };
+  const handleDelete = () => {
+    if (selectedEmail) {
+      // Filter out the selected email from the emails array
+      const updatedEmails = emails.filter(
+        (email) => email.email !== selectedEmail.email
+      );
+
+
+      // Update the emails state with the new array
+      setEmails(updatedEmails);
+
+
+      // Clear the selectedEmail state
+      setSelectedEmail(null);
+
+
+      // Close the popup
+      closeDeletePopup();
+    }
+  };
+
+
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -362,40 +386,6 @@ const DashboardContent = () => {
   const openReplyPopup = () => {
     setIsReplyPopupOpen(true);
   };
-
-  const handleDelete = () => {
-    if (selectedEmail) {
-      // Filter out the selected email from the emails array
-      const updatedEmails = emails.filter(
-        (email) => email.email !== selectedEmail.email
-      );
-  
-      // Update the emails state with the new array
-      setEmails(updatedEmails);
-  
-      // Clear the selectedEmail state
-      setSelectedEmail(null);
-  
-      // Close the popup
-      closeDeletePopup();
-    }
-  };
-
-  // Add event listener for keydown events
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.key === 'r' || event.key === 'R') {
-        openReplyPopup();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
-
 
 
   const filterEmails = (query, sort) => {
@@ -439,6 +429,60 @@ const DashboardContent = () => {
 
     setEmails(filteredEmails);
   };
+  const handleSendReply = () => {
+    const newReply = {
+      from: selectedEmail.to, // The email ID sending the reply
+      to: selectedEmail.from, // The recipient of the reply
+      date: new Date().toLocaleString(), // The current date and time
+      body: replyText, // The reply content from the textarea
+    };
+
+
+    const updatedEmail = {
+      ...selectedEmail,
+      replies: [...selectedEmail.replies, newReply], // Append the new reply to the existing replies
+    };
+
+
+    setSelectedEmail(updatedEmail);
+    closeReplyPopup(); // Close the reply popup after sending
+    setReplyText(""); // Clear the reply text area
+  };
+  // Add event listener for keydown events
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "r" || event.key === "R") {
+        openReplyPopup();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+  
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      // Check if the event target is not the textarea
+      if (
+        event.key === "d" && event.key === "D" &&
+        event.target.tagName !== "TEXTAREA" &&
+        event.target.tagName !== "INPUT"
+      ) {
+        // Trigger delete popup logic
+        setIsDeletePopupOpen(true);
+      }
+    };
+  
+    window.addEventListener("keydown", handleKeyDown);
+  
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
 
   const handleSearchChange = (event) => {
@@ -504,7 +548,39 @@ const DashboardContent = () => {
   const toggleReplies = () => {
     setShowReplies((prev) => !prev);
   };
-  const unreadEmailsCount = emails.filter(email => !readEmails[email.email]).length;
+  const unreadEmailsCount = emails.filter(
+    (email) => !readEmails[email.email]
+  ).length;
+
+  const ReplyPopup = ({
+    isReplyPopupOpen,
+    closeReplyPopup,
+    selectedEmail,
+    replyText,
+    setReplyText,
+    handleSendReply,
+    toggleReplies,
+    handleSaveDraft, // Add this function to save as a draft
+  }) => {
+    useEffect(() => {
+      const handleKeyDown = (event) => {
+        // Check if Ctrl + S is pressed
+        if (event.ctrlKey && event.key === "s") {
+          event.preventDefault(); // Prevent the default browser save action
+          handleSaveDraft(); // Call the save draft function
+        }
+      };
+
+
+      window.addEventListener("keydown", handleKeyDown);
+
+
+      // Cleanup the event listener on component unmount
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }, [handleSaveDraft]);
+  };
 
 
   return (
@@ -569,7 +645,7 @@ const DashboardContent = () => {
 
 
           {/* Email Previews List (Scrollable) */}
-          <div className="overflow-y-scroll h-[calc(100vh-280px)] scrollbar-hide">
+          <div className="overflow-y-scroll h-[calc(100vh-280px)] scrollbar-hide focus:outline-none">
             {emails
               .filter((email) =>
                 email.email.toLowerCase().includes(searchQuery.toLowerCase())
@@ -603,8 +679,34 @@ const DashboardContent = () => {
           </div>
         </div>
       </div>
-
-
+      {/* Delete Confirmation Popup */}
+      {isDeletePopupOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="gap-y-4 bg-[#1f2125] w-96 p-6 rounded-md border border-[#2c3236] flex flex-col">
+            <div className="text-white text-lg mb-4 text-center">
+              Are you sure ?
+            </div>
+            <div className="text-[#9d9c9c] text-sm mb-4 text-center">
+              Your email will be deleted
+            </div>
+            <div className="flex justify-center space-x-4 mt-2">
+              <button
+                onClick={closeDeletePopup}
+                className="bg-gray-600 text-white py-2 px-9 rounded-sm"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                className="bg-red-600 text-white py-2 px-9 rounded-sm"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+           
+        </div>
+      )}
       {/* Mid Column (w-1/2) */}
       <div className="w-2/4  border-r border-[#2c3236]">
         {selectedEmail ? (
@@ -718,7 +820,7 @@ const DashboardContent = () => {
               </div>
               {/* Replies Section */}
               {showReplies && (
-                <div className=" border-t border-[#2c3236] overflow-y-scroll h-[calc(100vh-410px)] scrollbar-hide">
+                <div className="border-t border-[#2c3236] overflow-y-scroll h-[calc(100vh-410px)] scrollbar-hide">
                   {selectedEmail.replies.map((reply, index) => (
                     <div
                       key={index}
@@ -729,7 +831,7 @@ const DashboardContent = () => {
                           <div>
                             <div className="flex flex-row justify-between">
                               <strong className="text-white text-xl">
-                                {selectedEmail.title}
+                                {reply.title || selectedEmail.title}
                               </strong>
                               <div>{reply.date}</div>
                             </div>
@@ -741,9 +843,7 @@ const DashboardContent = () => {
                             <strong>to:</strong> {reply.to}
                           </div>
                         </div>
-
-
-                        <div className="bg-[#1f2125]  rounded-md text-white">
+                        <div className="bg-[#1f2125] rounded-md text-white">
                           <div>{reply.body}</div>
                         </div>
                       </div>
@@ -751,6 +851,8 @@ const DashboardContent = () => {
                   ))}
                 </div>
               )}
+
+
               {/* Fixed Reply Button */}
               <div className="fixed bottom-0 left-100 mb-4 ml-4">
                 <button
@@ -765,12 +867,10 @@ const DashboardContent = () => {
             {/* Reply Popup */}
             {isReplyPopupOpen && (
               <div className="fixed inset-0 z-50 flex items-end justify-center bg-black bg-opacity-50">
-                <div className="bg-[#1f2125] w-1/2 ml-16 mb-4 h-4/5 rounded-md border-[#2c3236] border-2  relative">
+                <div className="bg-[#1f2125] w-1/2 ml-16 mb-4 h-4/5 rounded-md border-[#2c3236] border-2 relative">
                   {/* Header */}
                   <div className="flex justify-between items-center border-b border-[#2c3236] pb-2 bg-[#23272c]">
-                    <div className="text-xs pt-2 text-gray-400  pl-8 ">
-                      Reply
-                    </div>
+                    <div className="text-xs pt-2 text-gray-400 pl-8">Reply</div>
                     <button
                       onClick={closeReplyPopup}
                       className="text-white text-2xl pr-2 pt-2"
@@ -783,15 +883,15 @@ const DashboardContent = () => {
                   {/* Email Info */}
                   <div className="mt-2 space-y-2">
                     <div className="text-sm text-gray-300 pl-8 border-b-2 border-[#2c3236] pb-2">
-                      <span className="text-gray-500">To: </span>{" "}
+                      <span className="text-gray-500">To: </span>
                       {selectedEmail.to}
                     </div>
                     <div className="text-sm text-gray-300 pl-8 border-b-2 border-[#2c3236] pb-2">
-                      <span className="text-gray-500">From: </span>{" "}
+                      <span className="text-gray-500">From: </span>
                       {selectedEmail.from}
                     </div>
                     <div className="text-sm text-gray-300 pl-8 border-b-2 border-[#2c3236] pb-2">
-                      <span className="text-gray-500">Subject: </span>{" "}
+                      <span className="text-gray-500">Subject: </span>
                       {selectedEmail.title}
                     </div>
                   </div>
@@ -801,24 +901,33 @@ const DashboardContent = () => {
                   <div className="mt-4 flex-1 pl-8 pr-8 border-b-2 border-[#2c3236]">
                     <textarea
                       className="w-full h-80 bg-[#1f2125] text-gray-400 text-sm p-2 rounded-md mr-20 appearance-none focus:outline-none focus:border-none"
-                      defaultValue={`Hi ${selectedEmail.name},`}
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
                     />
                   </div>
 
 
                   {/* Footer */}
                   <div className="flex gap-x-4 items-center mt-2 px-4">
-                    <button className="bg-blue-600 text-white py-2 px-4 rounded-md flex flex-row gap-x-3">
+                    <button
+                      onClick={() => {
+                        handleSendReply();
+                        toggleReplies();
+                      }}
+                      className="bg-blue-600 text-white py-2 px-4 rounded-md flex flex-row gap-x-3"
+                    >
                       <p>Send</p>
                       <MdOutlineArrowDropDown className="text-2xl" />
                     </button>
+
+
                     <div className="flex space-x-4 text-white text-sm">
                       <button className="flex flex-row mt-2 gap-x-1 text-gray-400">
-                        <AiFillThunderbolt className=" text-xl" />{" "}
+                        <AiFillThunderbolt className="text-xl" />
                         <span>Variables</span>
                       </button>
                       <button className="flex flex-row mt-2 gap-x-2 text-gray-400">
-                        <LuEye className="text-xl " />{" "}
+                        <LuEye className="text-xl" />
                         <span>Preview Email</span>
                       </button>
                       <button className="text-xl mt-1 text-gray-400">A</button>
