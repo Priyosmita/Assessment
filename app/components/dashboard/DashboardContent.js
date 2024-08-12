@@ -14,6 +14,9 @@ import { PiSmiley } from "react-icons/pi";
 import { MdPersonRemove } from "react-icons/md";
 import { IoCodeSharp } from "react-icons/io5";
 import { MdOutlineArrowDropDown } from "react-icons/md";
+
+
+
 const emailData = [
   {
     name: "John Doe",
@@ -353,6 +356,22 @@ const DashboardContent = () => {
     setIsReplyPopupOpen(true);
   };
 
+  // Add event listener for keydown events
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'r' || event.key === 'R') {
+        openReplyPopup();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+
 
   const filterEmails = (query, sort) => {
     const lowercasedQuery = query.toLowerCase();
@@ -539,9 +558,9 @@ const DashboardContent = () => {
                 >
                   <div className="flex justify-between items-center">
                     <div className="flex items-center">
-                    {!readEmails[email.email] && (
-                      <span className="text-blue-500 mr-2 text-xl">●</span>
-                    )}
+                      {!readEmails[email.email] && (
+                        <span className="text-blue-500 mr-2 text-xl">●</span>
+                      )}
                       <span className="text-white">{email.email}</span>
                     </div>
                     <div className="text-gray-400 text-sm">{email.date}</div>
