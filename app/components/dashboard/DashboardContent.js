@@ -281,11 +281,9 @@ const emailData = [
   },
 ];
 
-
 const getStatusButton = (status) => {
   let buttonText;
   let buttonColor;
-
 
   switch (status) {
     case "Interested":
@@ -309,7 +307,6 @@ const getStatusButton = (status) => {
       buttonColor = "text-green-500";
   }
 
-
   return (
     <button
       className={`mr-3 px-2 bg-[#1f2125] ${buttonColor} text-xs rounded-full flex items-center`}
@@ -319,7 +316,6 @@ const getStatusButton = (status) => {
     </button>
   );
 };
-
 
 const DashboardContent = () => {
   const [emails, setEmails] = useState(emailData);
@@ -335,9 +331,7 @@ const DashboardContent = () => {
     selectedEmail ? `Hi ${selectedEmail.name},` : ""
   );
 
-
   const menuRef = useRef(null);
-
 
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -351,7 +345,6 @@ const DashboardContent = () => {
     setIsDeletePopupOpen(true);
   };
 
-
   const closeDeletePopup = () => {
     setIsDeletePopupOpen(false);
   };
@@ -362,20 +355,16 @@ const DashboardContent = () => {
         (email) => email.email !== selectedEmail.email
       );
 
-
       // Update the emails state with the new array
       setEmails(updatedEmails);
 
-
       // Clear the selectedEmail state
       setSelectedEmail(null);
-
 
       // Close the popup
       closeDeletePopup();
     }
   };
-
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -387,13 +376,11 @@ const DashboardContent = () => {
     setIsReplyPopupOpen(true);
   };
 
-
   const filterEmails = (query, sort) => {
     const lowercasedQuery = query.toLowerCase();
     let filteredEmails = emailData.filter((email) =>
       email.email.toLowerCase().includes(lowercasedQuery)
     );
-
 
     switch (sort) {
       case "Newest":
@@ -426,7 +413,6 @@ const DashboardContent = () => {
       // No additional filtering or sorting
     }
 
-
     setEmails(filteredEmails);
   };
   const handleSendReply = () => {
@@ -437,12 +423,10 @@ const DashboardContent = () => {
       body: replyText, // The reply content from the textarea
     };
 
-
     const updatedEmail = {
       ...selectedEmail,
       replies: [...selectedEmail.replies, newReply], // Append the new reply to the existing replies
     };
-
 
     setSelectedEmail(updatedEmail);
     closeReplyPopup(); // Close the reply popup after sending
@@ -458,12 +442,10 @@ const DashboardContent = () => {
 
     window.addEventListener("keydown", handleKeyDown);
 
-
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
-  
   useEffect(() => {
     const handleKeyDown = (event) => {
       // Check if the event target is not the textarea
@@ -476,14 +458,13 @@ const DashboardContent = () => {
         setIsDeletePopupOpen(true);
       }
     };
-  
+
     window.addEventListener("keydown", handleKeyDown);
-  
+
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
-
 
   const handleSearchChange = (event) => {
     const query = event.target.value;
@@ -494,18 +475,15 @@ const DashboardContent = () => {
     setIsReplyPopupOpen(true);
   };
 
-
   const closeReplyPopup = () => {
     setIsReplyPopupOpen(false);
   };
-
 
   const handleSortChange = (event) => {
     const sort = event.target.value;
     setSortOption(sort);
     filterEmails(searchQuery, sort);
   };
-
 
   const handleEmailClick = (email) => {
     setSelectedEmail(email);
@@ -517,7 +495,6 @@ const DashboardContent = () => {
       [email.email]: true, // Mark the email as read
     }));
   };
-
 
   const handleStatusChange = (event) => {
     const newStatus = event.target.value;
@@ -534,13 +511,11 @@ const DashboardContent = () => {
     );
   };
 
-
   const handleDeleteEmail = () => {
     setEmails(emails.filter((email) => email.email !== selectedEmail.email));
     setSelectedEmail(null);
     setIsMenuOpen(false); // Ensure menu is closed after deletion
   };
-
 
   const handleRecoverEmail = () => {
     // Implement recovery logic here
@@ -551,7 +526,6 @@ const DashboardContent = () => {
   const unreadEmailsCount = emails.filter(
     (email) => !readEmails[email.email]
   ).length;
-
   const ReplyPopup = ({
     isReplyPopupOpen,
     closeReplyPopup,
@@ -571,9 +545,7 @@ const DashboardContent = () => {
         }
       };
 
-
       window.addEventListener("keydown", handleKeyDown);
-
 
       // Cleanup the event listener on component unmount
       return () => {
@@ -581,7 +553,6 @@ const DashboardContent = () => {
       };
     }, [handleSaveDraft]);
   };
-
 
   return (
     <div className="flex h-full">
@@ -599,13 +570,11 @@ const DashboardContent = () => {
             </div>
           </div>
 
-
           {/* Dynamic Text */}
           <div className="text-gray-400 mb-4 pl-2">
             <span className="font-bold text-white pl-2">25/25</span> Inboxes
             selected
           </div>
-
 
           {/* Search Bar */}
           <div className="mb-4">
@@ -617,7 +586,6 @@ const DashboardContent = () => {
               className="w-full bg-[#1f2125] text-white py-2 px-4 rounded-md border border-gray-600 focus:outline-none focus:border-gray-400"
             />
           </div>
-
 
           {/* New Replies and Sort Filter */}
           <div className="flex justify-between items-center mb-4">
@@ -642,7 +610,6 @@ const DashboardContent = () => {
               </select>
             </div>
           </div>
-
 
           {/* Email Previews List (Scrollable) */}
           <div className="overflow-y-scroll h-[calc(100vh-280px)] scrollbar-hide focus:outline-none">
@@ -742,13 +709,11 @@ const DashboardContent = () => {
                   </option>
                 </select>
 
-
                 {/* Move/Demo Dropdown */}
                 <select className="ml-2 bg-[#1f2125] text-white py-2 px-3 text-xs rounded-sm focus:outline-none focus:border-gray-400 border-[#2c3236] border-2">
                   <option>Move</option>
                   <option>Demo</option>
                 </select>
-
 
                 {/* Three-Dots Menu */}
                 <div
@@ -783,7 +748,6 @@ const DashboardContent = () => {
               </div>
             </div>
 
-
             {/* Email Details */}
             <div className="border  border-t-[#2c3236] border-b-[#2c3236] border-l-0 border-r-0 mr-4 ml-4 relative">
               <div className="bg-[#1f2125] p-4 rounded-md text-white mt-4 mb-8 ml-r mr-4">
@@ -803,7 +767,6 @@ const DashboardContent = () => {
                     <strong>to:</strong> {selectedEmail.to}
                   </div>
                 </div>
-
 
                 <div className="bg-[#1f2125]  rounded-md text-white">
                   <div>{selectedEmail.body}</div>
@@ -852,7 +815,6 @@ const DashboardContent = () => {
                 </div>
               )}
 
-
               {/* Fixed Reply Button */}
               <div className="fixed bottom-0 left-100 mb-4 ml-4">
                 <button
@@ -879,7 +841,6 @@ const DashboardContent = () => {
                     </button>
                   </div>
 
-
                   {/* Email Info */}
                   <div className="mt-2 space-y-2">
                     <div className="text-sm text-gray-300 pl-8 border-b-2 border-[#2c3236] pb-2">
@@ -896,7 +857,6 @@ const DashboardContent = () => {
                     </div>
                   </div>
 
-
                   {/* Body */}
                   <div className="mt-4 flex-1 pl-8 pr-8 border-b-2 border-[#2c3236]">
                     <textarea
@@ -905,7 +865,6 @@ const DashboardContent = () => {
                       onChange={(e) => setReplyText(e.target.value)}
                     />
                   </div>
-
 
                   {/* Footer */}
                   <div className="flex gap-x-4 items-center mt-2 px-4">
@@ -919,7 +878,6 @@ const DashboardContent = () => {
                       <p>Send</p>
                       <MdOutlineArrowDropDown className="text-2xl" />
                     </button>
-
 
                     <div className="flex space-x-4 text-white text-sm">
                       <button className="flex flex-row mt-2 gap-x-1 text-gray-400">
@@ -999,13 +957,11 @@ const DashboardContent = () => {
           </div>
         </div>
 
-
         {/* Activities Section */}
         <div className="p-4">
           <div className="bg-[#1f2125] rounded-lg mb-4">
             <p className="pt-2 pb-2 pr-4 pl-4">Activities</p>
           </div>
-
 
           {/* Campaign Name */}
           <div className="pt-2 pb-4 pr-4 pl-4 ">
@@ -1014,7 +970,6 @@ const DashboardContent = () => {
               3 Steps | 5 Days in Sequence
             </p>
           </div>
-
 
           {/* Steps */}
           <div className="space-y-4 pl-4 relative">
@@ -1034,7 +989,6 @@ const DashboardContent = () => {
               </div>
             </div>
 
-
             {/* Step 2 */}
             <div className="flex flex-row items-center space-x-4">
               <div className="relative w-8 h-8 flex items-center justify-center bg-gray-700 rounded-full">
@@ -1051,7 +1005,6 @@ const DashboardContent = () => {
                 </span>
               </div>
             </div>
-
 
             {/* Step 3 */}
             <div className="flex flex-row items-center space-x-4">
@@ -1075,5 +1028,5 @@ const DashboardContent = () => {
   );
 };
 
-
 export default DashboardContent;
+
