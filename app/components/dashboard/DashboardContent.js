@@ -333,11 +333,18 @@ const DashboardContent = () => {
   const [showReplies, setShowReplies] = useState(false);
   const [isReplyPopupOpen, setIsReplyPopupOpen] = useState(false);
   const [readEmails, setReadEmails] = useState({});
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
 
 
   const menuRef = useRef(null);
 
 
+  const openDeletePopup = () => {
+    setIsDeletePopupOpen(true);
+  };
+  const closeDeletePopup = () => {
+    setIsDeletePopupOpen(false);
+  };
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -354,6 +361,24 @@ const DashboardContent = () => {
   }, []);
   const openReplyPopup = () => {
     setIsReplyPopupOpen(true);
+  };
+
+  const handleDelete = () => {
+    if (selectedEmail) {
+      // Filter out the selected email from the emails array
+      const updatedEmails = emails.filter(
+        (email) => email.email !== selectedEmail.email
+      );
+  
+      // Update the emails state with the new array
+      setEmails(updatedEmails);
+  
+      // Clear the selectedEmail state
+      setSelectedEmail(null);
+  
+      // Close the popup
+      closeDeletePopup();
+    }
   };
 
   // Add event listener for keydown events
